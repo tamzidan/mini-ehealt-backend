@@ -1,23 +1,36 @@
 import uuid
 from flask import Flask, jsonify, request
-from flask_cors import CORS  # ← Sudah ada
+from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime, date, timedelta
 from sqlalchemy.exc import IntegrityError
+import os
 
 # -----------------------------------------------------------------------------
 # Inisialisasi Aplikasi Flask & Konfigurasi Database
 # -----------------------------------------------------------------------------
 app = Flask(__name__)
 
-# ✅ TAMBAHKAN KONFIGURASI CORS INI
+# --- Ganti blok CORS Anda dengan ini ---
+# Dapatkan URL frontend dari environment variable (untuk produksi)
+frontend_prod_url = os.environ.get('FRONTEND_URL')
+
+# Daftar asal (origin) yang diizinkan
+# Secara default, izinkan localhost untuk pengembangan
+origins = ["http://localhost:3000", "http://127.0.0.1:3000"]
+
+# Jika ada URL produksi, tambahkan ke daftar
+if frontend_prod_url:
+    origins.append(frontend_prod_url)
+
 CORS(app, resources={
     r"/v1/*": {
-        "origins": ["http://localhost:3000", "http://127.0.0.1:3000"],
+        "origins": origins, # Gunakan daftar dinamis
         "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
         "allow_headers": ["Content-Type", "Authorization"]
     }
 })
+# --- Akhir dari blok CORS ---
 
 # Konfigurasi koneksi ke database MySQL
 # Format: 'mysql+mysqlconnector://<user>:<password>@<host>/<database_name>'
@@ -26,7 +39,7 @@ DB_PASS = 'PasswordSuperAman123!'
 DB_HOST = 'localhost'
 DB_NAME = 'doctor_booking_db'
 
-app.config['SQLALCHEMY_DATABASE_URI'] = f'mysql+mysqlconnector://{DB_USER}:{DB_PASS}@{DB_HOST}/{DB_NAME}'
+app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 # Inisialisasi SQLAlchemy
