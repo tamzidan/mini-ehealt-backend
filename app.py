@@ -1,10 +1,14 @@
+import os
+from dotenv import load_dotenv
+load_dotenv() # <-- TAMBAHKAN INI
+
 import uuid
 from flask import Flask, jsonify, request
 from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime, date, timedelta
 from sqlalchemy.exc import IntegrityError
-import os
+
 
 # -----------------------------------------------------------------------------
 # Inisialisasi Aplikasi Flask & Konfigurasi Database
@@ -39,7 +43,8 @@ DB_PASS = 'PasswordSuperAman123!'
 DB_HOST = 'localhost'
 DB_NAME = 'doctor_booking_db'
 
-app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL')
+# Baris ini sekarang akan mendapatkan DATABASE_URL dari file .env saat dijalankan di lokal
+app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL') 
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 # Inisialisasi SQLAlchemy

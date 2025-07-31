@@ -1,3 +1,6 @@
+from dotenv import load_dotenv
+load_dotenv() # Memuat environment variables dari file .env
+
 from app import app, db, Doctor, TimeSlot
 from datetime import datetime, time, timedelta
 import random
